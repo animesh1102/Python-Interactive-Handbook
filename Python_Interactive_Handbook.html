@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Handbook — Interactive Edition ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#f06292;--pink-light:#fce4ec;--pink-mid:#f48fb1;
+  --purple:#9c27b0;--purple-light:#f3e5f5;--purple-mid:#ce93d8;
+  --lavender:#7986cb;--lavender-light:#e8eaf6;
+  --green:#43a047;--green-light:#e8f5e9;
+  --amber:#f57c00;--amber-light:#fff8e1;
+  --red:#e53935;--red-light:#ffebee;
+  --text:#2d2d2d;--muted:#757575;--border:#e0d7f0;
+  --card:#fff;--page:#fdf6ff;
+  --code-bg:#f8f4ff;--sidebar:#fff;
+}
+body{font-family:'Nunito',sans-serif;background:var(--page);color:var(--text);font-size:15px;line-height:1.65;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Header ── */
+header{background:linear-gradient(135deg,#e91e8c,#9c27b0,#5c6bc0);padding:14px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+header h1{color:#fff;font-size:1.15em;font-weight:800;letter-spacing:.01em}
+header span{color:rgba(255,255,255,.75);font-size:.85em}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.progress-pill{background:rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:4px 12px;font-size:.8em;font-weight:700}
+
+/* ── Layout ── */
+.app{display:flex;flex:1;overflow:hidden;height:calc(100vh - 54px)}
+
+/* ── Sidebar ── */
+.sidebar{width:250px;min-width:250px;background:var(--sidebar);border-right:1.5px solid var(--border);overflow-y:auto;padding:12px 0}
+.sidebar-section{padding:6px 16px 2px;font-size:.7em;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-top:6px}
+.chapter-btn{width:100%;text-align:left;padding:8px 16px 8px 20px;border:none;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.85em;font-weight:600;color:var(--muted);border-left:3px solid transparent;transition:all .15s;position:relative;display:flex;align-items:center;gap:8px}
+.chapter-btn:hover{background:var(--purple-light);color:var(--purple)}
+.chapter-btn.active{background:var(--pink-light);color:var(--pink);border-left-color:var(--pink);font-weight:800}
+.chapter-btn.done .ch-icon{color:var(--green)}
+.ch-icon{font-size:1em;min-width:16px}
+.ch-num{font-size:.75em;background:var(--lavender-light);color:var(--lavender);border-radius:10px;padding:1px 6px;font-weight:700}
+
+/* ── Main content ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+
+/* ── Lesson panel ── */
+.lesson-panel{padding:32px 40px 24px;max-width:780px;width:100%}
+.lesson-header{margin-bottom:20px}
+.lesson-tag{display:inline-block;background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff;border-radius:20px;padding:3px 12px;font-size:.75em;font-weight:800;margin-bottom:8px}
+.lesson-title{font-size:1.6em;font-weight:800;color:#1a1a1a;line-height:1.2;margin-bottom:4px}
+.lesson-subtitle{color:var(--muted);font-size:.9em}
+.lesson-objectives{background:linear-gradient(135deg,var(--lavender-light),var(--purple-light));border-left:4px solid var(--lavender);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:.9em}
+.lesson-objectives strong{color:var(--lavender);display:block;margin-bottom:6px;font-size:.85em;text-transform:uppercase;letter-spacing:.06em}
+.lesson-objectives ul{padding-left:1.2em}
+.lesson-objectives li{margin:3px 0}
+.lesson-body p{margin-bottom:.9em}
+.lesson-body h3{font-size:1.05em;font-weight:800;color:var(--purple);margin:22px 0 8px;padding-bottom:4px;border-bottom:2px dashed var(--border)}
+.lesson-body h3::before{content:"✿ ";color:var(--pink-mid)}
+.lesson-body strong{color:var(--purple)}
+.lesson-body ul,
+.lesson-body ol{padding-left:1.4em;margin:.4em 0 .9em}
+.lesson-body li{margin:3px 0}
+.lesson-body li::marker{color:var(--pink)}
+
+/* ── Code block ── */
+.code-block{background:var(--code-bg);border:1.5px solid var(--border);border-left:4px solid var(--purple-mid);border-radius:10px;margin:14px 0;overflow:hidden}
+.code-label{background:linear-gradient(90deg,var(--purple-light),var(--lavender-light));padding:6px 14px;font-size:.72em;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+.code-label::before{content:"💻"}
+pre.code-content{padding:14px 16px;font-family:'Source Code Pro',monospace;font-size:.83em;line-height:1.6;color:#1a1a1a;overflow-x:auto;background:transparent}
+pre.code-content .kw{color:#6a1b9a;font-weight:700}
+pre.code-content .st{color:#2e7d32}
+pre.code-content .nm{color:#c62828}
+pre.code-content .cm{color:#9e9e9e;font-style:italic}
+pre.code-content .fn{color:#ad1457}
+pre.code-content .bi{color:#5c1a8a}
+
+/* ── Info box ── */
+.info-box{border-radius:10px;padding:12px 16px;margin:14px 0;font-size:.9em;display:flex;gap:10px;align-items:flex-start}
+.info-box.tip{background:var(--amber-light);border:1px solid #ffe082}
+.info-box.note{background:var(--lavender-light);border:1px solid var(--lavender)}
+.info-box.warning{background:var(--red-light);border:1px solid #ef9a9a}
+.info-icon{font-size:1.2em;min-width:20px}
+
+/* ── Divider ── */
+.lesson-divider{border:none;text-align:center;color:var(--pink-mid);font-size:1em;letter-spacing:.4em;margin:20px 0}
+.lesson-divider::before{content:"✦ ✿ ✦"}
+
+/* ── Quiz section ── */
+.quiz-section{background:linear-gradient(135deg,#fce4ec,#f3e5f5);border:2px solid var(--pink-mid);border-radius:16px;padding:22px 26px;margin:24px 0}
+.quiz-title{font-size:1em;font-weight:800;color:var(--pink);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.quiz-subtitle{font-size:.85em;color:var(--muted);margin-bottom:18px}
+.quiz-q{font-weight:700;margin-bottom:12px;font-size:.95em}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff;font-size:.9em;font-weight:600;text-align:left}
+.quiz-opt:hover{border-color:var(--purple-mid);background:var(--purple-light)}
+.quiz-opt.correct{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red-light);color:var(--red)}
+.quiz-opt-letter{width:26px;height:26px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-weight:800;font-size:.8em;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quiz-feedback{margin-top:14px;padding:10px 14px;border-radius:10px;font-size:.88em;font-weight:700;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.good{background:var(--green-light);color:var(--green)}
+.quiz-feedback.bad{background:var(--red-light);color:var(--red)}
+
+/* ── Try it editor ── */
+.editor-section{background:var(--code-bg);border:2px solid var(--purple-mid);border-radius:14px;margin:20px 0;overflow:hidden}
+.editor-header{background:linear-gradient(90deg,var(--purple-light),var(--lavender-light));padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.editor-title{font-weight:800;color:var(--purple);font-size:.9em;display:flex;align-items:center;gap:8px}
+.run-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:20px;padding:6px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82em;cursor:pointer;transition:transform .1s}
+.run-btn:hover{transform:scale(1.03)}
+.run-btn:active{transform:scale(.97)}
+.code-editor{width:100%;min-height:100px;font-family:'Source Code Pro',monospace;font-size:.83em;background:transparent;border:none;border-top:1px solid var(--border);padding:14px 16px;resize:vertical;outline:none;color:#1a1a1a;line-height:1.6}
+.output-box{border-top:1px solid var(--border);padding:12px 16px;font-family:'Source Code Pro',monospace;font-size:.82em;min-height:40px;color:#1a1a1a;white-space:pre-wrap}
+.output-label{font-size:.7em;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;font-family:'Nunito',sans-serif}
+.output-box.has-output{background:#fff}
+.output-box.error{color:var(--red);background:var(--red-light)}
+
+/* ── AI Tutor ── */
+.ai-section{border-top:2px dashed var(--border);padding:20px 40px 32px;max-width:780px}
+.ai-title{font-weight:800;color:var(--purple);margin-bottom:12px;display:flex;align-items:center;gap:8px;font-size:.95em}
+.ai-messages{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:280px;overflow-y:auto}
+.ai-msg{padding:10px 14px;border-radius:12px;font-size:.88em;line-height:1.55;max-width:90%}
+.ai-msg.tutor{background:linear-gradient(135deg,var(--pink-light),var(--purple-light));border-bottom-left-radius:4px;align-self:flex-start}
+.ai-msg.user{background:linear-gradient(135deg,var(--lavender-light),var(--purple-light));border-bottom-right-radius:4px;align-self:flex-end;text-align:right}
+.ai-msg.loading{background:var(--purple-light);color:var(--muted);font-style:italic}
+.ai-input-row{display:flex;gap:8px}
+.ai-input{flex:1;border:2px solid var(--border);border-radius:20px;padding:9px 16px;font-family:'Nunito',sans-serif;font-size:.88em;outline:none;background:#fff;transition:border-color .15s}
+.ai-input:focus{border-color:var(--purple-mid)}
+.ai-send-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:20px;padding:9px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82em;cursor:pointer;white-space:nowrap}
+.quick-asks{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.quick-ask-btn{background:var(--purple-light);color:var(--purple);border:none;border-radius:20px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:.78em;font-weight:700;cursor:pointer;transition:all .15s}
+.quick-ask-btn:hover{background:var(--purple-mid);color:#fff}
+
+/* ── Bottom nav ── */
+.bottom-nav{padding:16px 40px 24px;display:flex;justify-content:space-between;align-items:center;max-width:780px;border-top:1.5px solid var(--border)}
+.nav-btn{padding:10px 22px;border-radius:24px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88em;cursor:pointer;border:2px solid var(--border);background:#fff;color:var(--muted);transition:all .15s}
+.nav-btn:hover{border-color:var(--purple-mid);color:var(--purple);background:var(--purple-light)}
+.nav-btn.primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border-color:transparent}
+.nav-btn.primary:hover{opacity:.92}
+.chapter-progress{font-size:.82em;color:var(--muted);font-weight:600}
+
+/* ── Welcome screen ── */
+.welcome{padding:48px 40px;max-width:700px}
+.welcome h2{font-size:1.8em;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#e91e8c,#9c27b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.welcome p{color:var(--muted);margin-bottom:24px;font-size:.95em}
+.welcome-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+.welcome-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+.welcome-card .icon{font-size:2em;margin-bottom:8px}
+.welcome-card h3{font-size:.9em;font-weight:800;color:var(--purple);margin-bottom:4px}
+.welcome-card p{font-size:.8em;color:var(--muted)}
+.start-btn{background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff;border:none;border-radius:28px;padding:14px 36px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1em;cursor:pointer;box-shadow:0 4px 16px rgba(156,39,176,.3);transition:transform .15s}
+.start-btn:hover{transform:translateY(-2px)}
+
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.88em}
+th{background:linear-gradient(90deg,#e91e8c,#9c27b0);color:#fff;padding:8px 12px;text-align:left}
+td{padding:6px 12px;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--pink-light)}
+
+.sparkle{animation:sparkle 1.5s ease-in-out infinite alternate}
+@keyframes sparkle{from{opacity:.7}to{opacity:1}}
+</style>
+</head>
+<body>
+<header>
+  <div>✨</div>
+  <h1>Python Handbook</h1>
+  <span>Interactive Edition</span>
+  <div class="header-right">
+    <div class="progress-pill" id="progress-pill">0 / 52 chapters</div>
+  </div>
+</header>
+
+<div class="app">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section">Part 1 — Foundations</div>
+    <button class="chapter-btn" onclick="loadChapter(0)"><span class="ch-icon">🏠</span>Welcome</button>
+    <button class="chapter-btn" onclick="loadChapter(1)"><span class="ch-num">1</span>What Is Programming?</button>
+    <button class="chapter-btn" onclick="loadChapter(2)"><span class="ch-num">2</span>How Python Works</button>
+    <button class="chapter-btn" onclick="loadChapter(3)"><span class="ch-num">3</span>Installing Python</button>
+    <button class="chapter-btn" onclick="loadChapter(4)"><span class="ch-num">4</span>Your First Program</button>
+    <button class="chapter-btn" onclick="loadChapter(5)"><span class="ch-num">5</span>Variables</button>
+    <button class="chapter-btn" onclick="loadChapter(6)"><span class="ch-num">6</span>Data Types</button>
+    <button class="chapter-btn" onclick="loadChapter(7)"><span class="ch-num">7</span>Input and Output</button>
+    <button class="chapter-btn" onclick="loadChapter(8)"><span class="ch-num">8</span>Operators</button>
+    <button class="chapter-btn" onclick="loadChapter(9)"><span class="ch-num">9</span>Strings</button>
+    <button class="chapter-btn" onclick="loadChapter(10)"><span class="ch-num">10</span>Lists</button>
+    <div class="sidebar-section">Part 2 — Control</div>
+    <button class="chapter-btn" onclick="loadChapter(11)"><span class="ch-num">11</span>Tuples</button>
+    <button class="chapter-btn" onclick="loadChapter(12)"><span class="ch-num">12</span>Sets</button>
+    <button class="chapter-btn" onclick="loadChapter(13)"><span class="ch-num">13</span>Dictionaries</button>
+    <button class="chapter-btn" onclick="loadChapter(14)"><span class="ch-num">14</span>Boolean Logic</button>
+    <button class="chapter-btn" onclick="loadChapter(15)"><span class="ch-num">15</span>If Statements</button>
+    <button class="chapter-btn" onclick="loadChapter(16)"><span class="ch-num">16</span>Loops</button>
+    <button class="chapter-btn" onclick="loadChapter(17)"><span class="ch-num">17</span>Functions</button>
+    <button class="chapter-btn" onclick="loadChapter(18)"><span class="ch-num">18</span>Scope</button>
+    <button class="chapter-btn" onclick="loadChapter(19)"><span class="ch-num">19</span>Modules</button>
+    <button class="chapter-btn" onclick="loadChapter(20)"><span class="ch-num">20</span>Packages</button>
+    <div class="sidebar-section">Part 3 — Intermediate</div>
+    <button class="chapter-btn" onclick="loadChapter(21)"><span class="ch-num">21</span>File Handling</button>
+    <button class="chapter-btn" onclick="loadChapter(22)"><span class="ch-num">22</span>Exceptions</button>
+    <button class="chapter-btn" onclick="loadChapter(23)"><span class="ch-num">23</span>OOP Part 1</button>
+    <button class="chapter-btn" onclick="loadChapter(24)"><span class="ch-num">24</span>OOP Part 2</button>
+    <button class="chapter-btn" onclick="loadChapter(25)"><span class="ch-num">25</span>Dates & Time</button>
+    <button class="chapter-btn" onclick="loadChapter(26)"><span class="ch-num">26</span>Regex</button>
+    <button class="chapter-btn" onclick="loadChapter(27)"><span class="ch-num">27</span>JSON</button>
+    <button class="chapter-btn" onclick="loadChapter(28)"><span class="ch-num">28</span>Virtual Envs</button>
+    <button class="chapter-btn" onclick="loadChapter(29)"><span class="ch-num">29</span>Pip</button>
+    <div class="sidebar-section">Part 4 — Advanced</div>
+    <button class="chapter-btn" onclick="loadChapter(30)"><span class="ch-num">30</span>Debugging</button>
+    <button class="chapter-btn" onclick="loadChapter(31)"><span class="ch-num">31</span>Testing</button>
+    <button class="chapter-btn" onclick="loadChapter(32)"><span class="ch-num">32</span>Iterators</button>
+    <button class="chapter-btn" onclick="loadChapter(33)"><span class="ch-num">33</span>Generators</button>
+    <button class="chapter-btn" onclick="loadChapter(34)"><span class="ch-num">34</span>Decorators</button>
+    <button class="chapter-btn" onclick="loadChapter(35)"><span class="ch-num">35</span>Lambda Functions</button>
+    <button class="chapter-btn" onclick="loadChapter(36)"><span class="ch-num">36</span>Comprehensions</button>
+    <button class="chapter-btn" onclick="loadChapter(37)"><span class="ch-num">37</span>Type Hints</button>
+    <button class="chapter-btn" onclick="loadChapter(38)"><span class="ch-num">38</span>Dataclasses</button>
+    <div class="sidebar-section">Part 5 — Pro</div>
+    <button class="chapter-btn" onclick="loadChapter(39)"><span class="ch-num">39</span>APIs</button>
+    <button class="chapter-btn" onclick="loadChapter(40)"><span class="ch-num">40</span>Web Scraping</button>
+    <button class="chapter-btn" onclick="loadChapter(41)"><span class="ch-num">41</span>NumPy</button>
+    <button class="chapter-btn" onclick="loadChapter(42)"><span class="ch-num">42</span>Pandas</button>
+    <button class="chapter-btn" onclick="loadChapter(43)"><span class="ch-num">43</span>Matplotlib</button>
+    <button class="chapter-btn" onclick="loadChapter(44)"><span class="ch-num">44</span>OOP Design</button>
+    <button class="chapter-btn" onclick="loadChapter(45)"><span class="ch-num">45</span>Concurrency</button>
+    <button class="chapter-btn" onclick="loadChapter(46)"><span class="ch-num">46</span>Performance</button>
+    <button class="chapter-btn" onclick="loadChapter(47)"><span class="ch-num">47</span>Best Practices</button>
+    <button class="chapter-btn" onclick="loadChapter(48)"><span class="ch-num">48</span>Common Mistakes</button>
+    <button class="chapter-btn" onclick="loadChapter(49)"><span class="ch-num">49</span>Projects</button>
+    <button class="chapter-btn" onclick="loadChapter(50)"><span class="ch-num">50</span>Engineering Apps</button>
+    <button class="chapter-btn" onclick="loadChapter(51)"><span class="ch-num">51</span>AI & ML</button>
+    <button class="chapter-btn" onclick="loadChapter(52)"><span class="ch-num">52</span>Career Roadmap</button>
+  </nav>
+
+  <!-- Main -->
+  <main class="main" id="main-area">
+    <!-- Content injected by JS -->
+  </main>
+</div>
+
+<script>
+// ── State ──
+let currentChapter = -1;
+let completedChapters = new Set(JSON.parse(localStorage.getItem('py_done') || '[]'));
+let aiHistory = [];
+
+// ── Chapter data ──
+const chapters = {
+  0: {
+    title: "Welcome! 🌸",
+    subtitle: "Your Python learning adventure starts here",
+    tag: "Start Here",
+    isWelcome: true
+  },
+  1: {
+    title: "What Is Programming?",
+    subtitle: "Understanding what code actually is",
+    tag: "Chapter 1",
+    objectives: ["Explain what a program is","Describe how a computer follows instructions","Understand the difference between hardware and software","Explain why Python is a good first language"],
+    sections: [
+      {heading:"The Core Idea", content:`A <strong>program</strong> is a set of instructions that tells a computer exactly what to do, one step at a time. Computers are very fast but very literal — they do precisely what you tell them, nothing more.
+
+Think of a recipe. A recipe is a list of steps: "mix flour and butter", "bake at 180°C for 25 minutes". A program is the same idea — a list of steps for the computer to follow.`},
+      {heading:"Why Python?", content:`Python was designed to be readable. Compare these two ways of saying the same thing:
+
+In some languages you'd write a lot of boilerplate code just to say hello. In Python, it's simply:<br><br>
+<code>print("Hello, world!")</code><br><br>
+That's it. Python reads almost like English, which makes it perfect for beginners — and it's also used by NASA, Instagram, and Netflix in real production systems.`},
+      {heading:"What Can Python Do?", content:`Python is used everywhere:
+<ul><li>🌐 Building websites (Instagram, Pinterest)</li><li>🤖 AI and machine learning (ChatGPT uses Python)</li><li>🚀 Space engineering and simulations</li><li>📊 Data analysis and science</li><li>🎮 Games and automation scripts</li></ul>`}
+    ],
+    code: {label:"Your first Python program", starter:`# This is your first program! 🎉
+# Lines starting with # are comments — Python ignores them.
+# They're notes for humans.
+
+print("Hello, world!")
+print("My name is Python! 🐍")
+print(2 + 2)  # Python can do maths too!`},
+    quiz: {
+      q: "What is a program?",
+      opts:["A type of computer hardware","A set of instructions telling a computer what to do","A programming language","A type of software app"],
+      correct:1,
+      explanation:"Correct! ✨ A program is a set of instructions. Hardware is the physical computer; Python is the language we write programs in."
+    }
+  },
+  2: {
+    title: "How Python Works",
+    subtitle: "Under the hood of the Python interpreter",
+    tag: "Chapter 2",
+    objectives:["Describe what happens when Python runs a program","Understand what the Python interpreter is","Know what source code and bytecode mean"],
+    sections:[
+      {heading:"The Interpreter", content:`When you write Python code, you're writing instructions in a human-readable language. But computers only understand machine code — binary 1s and 0s.
+
+Python solves this with an <strong>interpreter</strong>: a program that reads your Python code line by line and converts it into instructions the computer can run, right as it goes.`},
+      {heading:"What happens when you run a .py file", content:`Here's the journey your code takes:<br><br>
+<strong>1.</strong> You write <code>hello.py</code> (this is your <em>source code</em>)<br>
+<strong>2.</strong> Python reads and checks your code for syntax errors<br>
+<strong>3.</strong> Python compiles it to <em>bytecode</em> (a faster intermediate format)<br>
+<strong>4.</strong> The Python Virtual Machine (PVM) runs the bytecode<br>
+<strong>5.</strong> You see the output!`},
+      {heading:"CPython", content:`The most common version of Python is called <strong>CPython</strong> — it's written in C and is what you download from python.org. When someone just says "Python", they almost always mean CPython.`}
+    ],
+    code:{label:"Python works line by line", starter:`# Python executes top to bottom, line by line
+print("Line 1 runs first")
+print("Line 2 runs second")
+print("Line 3 runs third")
+
+# Try adding a print() statement of your own below!`},
+    quiz:{
+      q:"What does the Python interpreter do?",
+      opts:["Stores Python files on disk","Converts Python code into instructions the computer can run","Designs the user interface of your program","Downloads Python libraries"],
+      correct:1,
+      explanation:"Exactly right! 🌟 The interpreter reads your Python code and translates it into something the computer can actually execute."
+    }
+  },
+  3: {
+    title: "Installing Python and VS Code",
+    subtitle: "Setting up your coding environment",
+    tag: "Chapter 3",
+    objectives:["Install Python 3 on your computer","Install and set up VS Code","Run your first Python script from VS Code"],
+    sections:[
+      {heading:"Installing Python", content:`Go to <strong>python.org</strong> and download the latest Python 3 installer for your OS. On Windows, make sure to tick <strong>"Add Python to PATH"</strong> during installation — this is important!
+
+After installing, open a terminal and type:<br><code>python --version</code><br>You should see something like <code>Python 3.12.0</code> ✅`},
+      {heading:"Installing VS Code", content:`VS Code (Visual Studio Code) is a free, powerful code editor. Download it from <strong>code.visualstudio.com</strong>.
+
+Once installed, open VS Code and install the <strong>Python extension</strong> by Microsoft — search for "Python" in the Extensions panel (Ctrl+Shift+X). This gives you syntax highlighting, autocomplete, and the ability to run code directly.`},
+      {heading:"Running your first file", content:`
+<strong>1.</strong> Open VS Code → File → New File → save as <code>hello.py</code><br>
+<strong>2.</strong> Type: <code>print("Hello, world!")</code><br>
+<strong>3.</strong> Right-click in the editor → "Run Python File in Terminal"<br>
+<strong>4.</strong> See your output in the panel at the bottom! 🎉`}
+    ],
+    code:{label:"Test your setup", starter:`# If this runs without errors, your setup is perfect! ✅
+import sys
+print("Python version:", sys.version)
+print("You're all set! 🐍✨")`},
+    quiz:{
+      q:"When installing Python on Windows, what important option must you tick?",
+      opts:["Install for all users","Add Python to PATH","Enable developer mode","Install pip separately"],
+      correct:1,
+      explanation:"Spot on! ✅ Adding Python to PATH lets you run Python from any terminal window. Without it, Windows won't know where to find Python!"
+    }
+  },
+  4: {
+    title: "Running Your First Program",
+    subtitle: "print(), comments, and how scripts work",
+    tag: "Chapter 4",
+    objectives:["Write and run a Python script","Use the print() function","Understand comments","Know what syntax errors look like"],
+    sections:[
+      {heading:"The print() function", content:`<code>print()</code> is your best friend in Python. It displays output to the screen. You can print text (called a <em>string</em>), numbers, calculations — almost anything.
+
+<code>print("Hello!")</code> — prints text<br>
+<code>print(42)</code> — prints a number<br>
+<code>print(3 + 7)</code> — prints the result of a calculation`},
+      {heading:"Comments", content:`Comments are notes in your code that Python completely ignores. They start with a <code>#</code> symbol. Use them to explain what your code does — future-you will be very grateful!<br><br>
+<code># This is a single-line comment</code><br>
+<code>print("This runs")  # this comment is on the same line as code</code>`},
+      {heading:"Syntax errors", content:`A <strong>syntax error</strong> means you've written something Python can't understand — like a spelling mistake in your code. Python will tell you which line has the error.
+
+Common mistakes:<br>
+❌ <code>print("Hello')</code> — mismatched quotes<br>
+❌ <code>primt("Hello")</code> — typo in function name<br>
+✅ <code>print("Hello")</code> — correct!`}
+    ],
+    code:{label:"Play with print()", starter:`# Try changing the text and see what happens!
+print("Hello, world! 🌍")
+print("I am learning Python!")
+print(100 + 200)
+print("The answer is:", 6 * 7)
+
+# Your turn — add a print() statement below:
+`},
+    quiz:{
+      q:"What will print(3 * 4) display?",
+      opts:["3 * 4","34","12","Error"],
+      correct:2,
+      explanation:"Yes! 🎉 Python calculates 3 × 4 = 12 first, then prints the result. print() evaluates expressions before displaying them."
+    }
+  },
+  5: {
+    title: "Variables",
+    subtitle: "Giving names to values in memory",
+    tag: "Chapter 5",
+    objectives:["Create and use variables","Update variable values","Name variables following Python conventions","Use variables in calculations"],
+    sections:[
+      {heading:"The Problem Variables Solve", content:`Consider this program:
+
+<div class="code-block"><div class="code-label">confusing code</div><pre class="code-content">print(75000 / 122.6)
+print(75000 * 9.81)
+print(75000 + 1500)</pre></div>
+
+What does <code>75000</code> represent? Is it a mass? A force? A price? Without context, this is meaningless. <strong>Variables solve this</strong> by giving names to values.`},
+      {heading:"What Is a Variable?", content:`A <strong>variable</strong> is a name that refers to a value stored in memory. The <code>=</code> symbol is the <em>assignment operator</em> — it doesn't mean "equals" like in maths. It means "store this value with this name".
+
+<div class="info-box note"><span class="info-icon">💡</span><div>Think of a variable like a labelled box. You put a value inside the box and stick a label on it. Later, you can look inside any box using its label.</div></div>`},
+      {heading:"Naming Rules", content:`Python variable names must follow these rules:
+<ul>
+<li>✅ Letters, digits, underscores only: <code>mass_kg</code>, <code>speed2</code></li>
+<li>❌ Can't start with a digit: <code>2speed</code></li>
+<li>❌ No spaces: <code>my variable</code></li>
+<li>❌ Can't use keywords: <code>for</code>, <code>if</code>, <code>while</code></li>
+<li>Use lowercase with underscores (PEP 8): <code>wing_area</code>, <code>fuel_mass_kg</code></li>
+</ul>`}
+    ],
+    code:{label:"Variables in action ✈️", starter:`# Aerospace example — much clearer with variables!
+aircraft_weight = 75000    # Newtons
+wing_area = 122.6          # square metres
+
+wing_loading = aircraft_weight / wing_area
+
+print("Wing loading:", wing_loading, "N/m²")
+
+# Try changing aircraft_weight to 80000 and run again!
+# What changes?`},
+    quiz:{
+      q:"Which of these is a valid Python variable name?",
+      opts:["2nd_place","my variable","wing_area","for"],
+      correct:2,
+      explanation:"Perfect! 🌸 wing_area follows all the rules: lowercase, underscores, no spaces, doesn't start with a digit, not a keyword. The others all break at least one rule."
+    }
+  },
+  6: {
+    title: "Data Types",
+    subtitle: "int, float, str, bool — the building blocks",
+    tag: "Chapter 6",
+    objectives:["Identify Python's core built-in data types","Understand what a data type is","Convert between types using int(), float(), str()","Use type() to inspect a value"],
+    sections:[
+      {heading:"The Four Core Types", content:`Every value in Python has a <strong>type</strong> that determines what operations you can do with it.
+
+<table><tr><th>Type</th><th>Example</th><th>What it is</th></tr>
+<tr><td><code>int</code></td><td><code>42</code>, <code>-7</code></td><td>Whole numbers</td></tr>
+<tr><td><code>float</code></td><td><code>3.14</code>, <code>-0.5</code></td><td>Decimal numbers</td></tr>
+<tr><td><code>str</code></td><td><code>"hello"</code></td><td>Text (string of characters)</td></tr>
+<tr><td><code>bool</code></td><td><code>True</code>, <code>False</code></td><td>Yes/No values</td></tr></table>`},
+      {heading:"Checking the Type", content:`Use <code>type()</code> to see what type any value is:
+
+<code>type(42)</code> → <code>&lt;class 'int'&gt;</code><br>
+<code>type(3.14)</code> → <code>&lt;class 'float'&gt;</code><br>
+<code>type("hi")</code> → <code>&lt;class 'str'&gt;</code><br>
+<code>type(True)</code> → <code>&lt;class 'bool'&gt;</code>`},
+      {heading:"Type Conversion", content:`You can convert between types using built-in functions:
+
+<code>int("42")</code> → <code>42</code> (string to integer)<br>
+<code>float(7)</code> → <code>7.0</code> (integer to float)<br>
+<code>str(3.14)</code> → <code>"3.14"</code> (float to string)<br><br>
+
+<div class="info-box warning"><span class="info-icon">⚠️</span><div><code>int("hello")</code> will give an error! You can only convert strings that look like numbers.</div></div>`}
+    ],
+    code:{label:"Exploring data types 🔬", starter:`# Check the types of different values
+print(type(42))
+print(type(3.14))
+print(type("Python"))
+print(type(True))
+
+# Type conversion
+age_as_string = "18"
+age_as_int = int(age_as_string)
+print("Next year you'll be:", age_as_int + 1)
+
+# What type is the result of 10 / 3?
+print(type(10 / 3))  # Surprise! 🎉`},
+    quiz:{
+      q:"What type does Python assign to the value 3.0?",
+      opts:["int","str","float","double"],
+      correct:2,
+      explanation:"Correct! 💜 Even though 3.0 is mathematically a whole number, any number with a decimal point is a float in Python. Python doesn't have a 'double' type — that's from other languages."
+    }
+  },
+  7: {
+    title: "Input and Output",
+    subtitle: "Talking to your user with input() and print()",
+    tag: "Chapter 7",
+    objectives:["Accept user input using input()","Format output using f-strings","Control print() with sep and end","Understand that input() always returns a string"],
+    sections:[
+      {heading:"Getting Input", content:`<code>input()</code> pauses your program and waits for the user to type something and press Enter. It always returns a <strong>string</strong> — even if they type a number!
+
+<code>name = input("What's your name? ")</code><br>
+<code>print("Hello,", name)</code>`},
+      {heading:"⚠️ input() always gives a string!", content:`This is one of the most common beginner mistakes:
+<div class="info-box warning"><span class="info-icon">⚠️</span><div>If you want a number from input(), you <strong>must</strong> convert it: <code>age = int(input("Your age: "))</code>.<br>Without the <code>int()</code>, trying to do maths with it will cause an error.</div></div>`},
+      {heading:"f-strings", content:`f-strings (formatted string literals) are the modern, clean way to put values inside strings. Put an <code>f</code> before the opening quote, then use <code>{}</code> curly braces to embed any expression:
+
+<code>name = "Sophie"</code><br>
+<code>age = 15</code><br>
+<code>print(f"Hi {name}, you are {age} years old!")</code><br>
+Output: <code>Hi Sophie, you are 15 years old!</code>`}
+    ],
+    code:{label:"Make it interactive! 💬", starter:`# A simple greeting program
+name = input("What's your name? ")
+age = int(input("How old are you? "))
+
+next_year = age + 1
+print(f"Hi {name}! 👋")
+print(f"Next year you'll be {next_year}.")
+print(f"That's {next_year * 12} months old!")`},
+    quiz:{
+      q:"The user types 25 in response to input(). What type is the result?",
+      opts:["int","float","str","number"],
+      correct:2,
+      explanation:"Exactly! 🎯 input() ALWAYS returns a string, no matter what the user types. You need int() or float() to convert it to a number: age = int(input('Age: '))"
+    }
+  },
+  8: {
+    title: "Operators",
+    subtitle: "Arithmetic, comparison, and assignment operators",
+    tag: "Chapter 8",
+    objectives:["Use all arithmetic operators","Understand integer division and modulo","Use comparison operators","Use augmented assignment operators like +="],
+    sections:[
+      {heading:"Arithmetic Operators", content:`<table>
+<tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+<tr><td><code>+</code></td><td>Addition</td><td><code>5 + 3</code></td><td><code>8</code></td></tr>
+<tr><td><code>-</code></td><td>Subtraction</td><td><code>10 - 4</code></td><td><code>6</code></td></tr>
+<tr><td><code>*</code></td><td>Multiplication</td><td><code>3 * 4</code></td><td><code>12</code></td></tr>
+<tr><td><code>/</code></td><td>Division</td><td><code>7 / 2</code></td><td><code>3.5</code></td></tr>
+<tr><td><code>//</code></td><td>Floor division</td><td><code>7 // 2</code></td><td><code>3</code></td></tr>
+<tr><td><code>%</code></td><td>Modulo (remainder)</td><td><code>7 % 2</code></td><td><code>1</code></td></tr>
+<tr><td><code>**</code></td><td>Power</td><td><code>2 ** 8</code></td><td><code>256</code></td></tr>
+</table>`},
+      {heading:"Modulo — the hidden gem", content:`The <code>%</code> operator gives you the <strong>remainder</strong> after division. It's surprisingly useful:
+<ul>
+<li>Check if a number is even: <code>n % 2 == 0</code></li>
+<li>Wrap values around: <code>hour % 24</code> (keeps hours 0–23)</li>
+<li>Check divisibility: <code>n % 5 == 0</code> means n is a multiple of 5</li>
+</ul>`},
+      {heading:"Augmented Assignment", content:`Instead of writing <code>fuel = fuel - 5000</code>, Python lets you write <code>fuel -= 5000</code>. These are called <em>augmented assignment operators</em>:
+
+<code>x += 5</code>  (add 5 to x)<br>
+<code>x -= 3</code>  (subtract 3)<br>
+<code>x *= 2</code>  (multiply by 2)<br>
+<code>x /= 4</code>  (divide by 4)`}
+    ],
+    code:{label:"Operators playground 🧮", starter:`# Arithmetic
+print(10 + 3)   # 13
+print(10 - 3)   # 7
+print(10 * 3)   # 30
+print(10 / 3)   # 3.333...
+print(10 // 3)  # 3 (floor division)
+print(10 % 3)   # 1 (remainder)
+print(2 ** 10)  # 1024
+
+# Augmented assignment
+fuel_kg = 20000
+fuel_kg -= 5000   # Burned 5000 kg
+print("Fuel remaining:", fuel_kg, "kg")
+
+# Is 15 divisible by 3?
+print("Divisible by 3:", 15 % 3 == 0)`},
+    quiz:{
+      q:"What does 17 % 5 evaluate to?",
+      opts:["3","2","3.4","0"],
+      correct:1,
+      explanation:"Right! ✨ 17 ÷ 5 = 3 remainder 2. The % operator gives you the remainder, so 17 % 5 = 2. 5 goes into 17 three times (= 15), with 2 left over."
+    }
+  },
+  9: {
+    title: "Strings",
+    subtitle: "Working with text in Python",
+    tag: "Chapter 9",
+    objectives:["Create and manipulate strings","Use common string methods","Slice strings","Format strings with f-strings"],
+    sections:[
+      {heading:"Creating Strings", content:`Strings are sequences of characters wrapped in quotes. You can use single <code>'</code> or double <code>"</code> quotes — Python treats them the same.
+
+<code>'hello'</code> and <code>"hello"</code> are identical.<br>
+For multi-line strings, use triple quotes: <code>"""This is<br>multi-line"""</code>`},
+      {heading:"String Methods", content:`Strings have built-in methods (functions that belong to them):
+<table>
+<tr><th>Method</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>.upper()</code></td><td>All caps</td><td><code>"hi".upper()</code> → <code>"HI"</code></td></tr>
+<tr><td><code>.lower()</code></td><td>All lowercase</td><td><code>"HI".lower()</code> → <code>"hi"</code></td></tr>
+<tr><td><code>.strip()</code></td><td>Remove whitespace</td><td><code>"  hi  ".strip()</code> → <code>"hi"</code></td></tr>
+<tr><td><code>.replace(a,b)</code></td><td>Swap text</td><td><code>"cat".replace("c","b")</code> → <code>"bat"</code></td></tr>
+<tr><td><code>.split()</code></td><td>Split into list</td><td><code>"a,b".split(",")</code> → <code>["a","b"]</code></td></tr>
+<tr><td><code>.len()</code></td><td>Length</td><td><code>len("hello")</code> → <code>5</code></td></tr>
+</table>`},
+      {heading:"Slicing", content:`You can grab a part of a string using slice notation: <code>text[start:end]</code>. Python starts counting at <strong>0</strong>!
+
+<code>word = "Python"</code><br>
+<code>word[0]</code> → <code>"P"</code> (first character)<br>
+<code>word[0:3]</code> → <code>"Pyt"</code> (characters 0, 1, 2)<br>
+<code>word[-1]</code> → <code>"n"</code> (last character)`}
+    ],
+    code:{label:"String magic 🪄", starter:`message = "  Hello, Python World!  "
+
+# Methods
+print(message.strip())
+print(message.strip().upper())
+print(message.strip().lower())
+print(message.strip().replace("Python", "Amazing"))
+
+# Slicing
+word = "Programming"
+print(word[0])      # First letter
+print(word[0:7])    # First 7 letters
+print(word[-1])     # Last letter
+print(word[::-1])   # Reversed! 😲
+
+# f-string
+name = "Taylor"
+print(f"Hey {name.upper()}, you have {len(name)} letters in your name!")`},
+    quiz:{
+      q:'What does "Python"[1:4] return?',
+      opts:["Pyt","yth","ytho","ython"],
+      correct:1,
+      explanation:'Spot on! 💅 Python uses zero-based indexing. "Python"[1:4] gives characters at positions 1, 2, 3 — that\'s "y", "t", "h" → "yth". Position 4 is NOT included.'
+    }
+  },
+  10: {
+    title: "Lists",
+    subtitle: "Storing multiple values in one place",
+    tag: "Chapter 10",
+    objectives:["Create and use lists","Add, remove, and update items","Use list methods","Iterate over a list"],
+    sections:[
+      {heading:"What Is a List?", content:`A <strong>list</strong> is an ordered collection of values. Unlike a variable (which holds one thing), a list can hold many things — all in a single named container.
+
+<code>fruits = ["apple", "banana", "mango"]</code><br>
+<code>speeds = [200, 450, 600, 850]</code><br>
+<code>mixed = [42, "hello", True, 3.14]</code>  ← lists can hold different types`},
+      {heading:"Accessing Items", content:`Lists use the same zero-based indexing as strings:
+
+<code>fruits = ["apple", "banana", "mango"]</code><br>
+<code>fruits[0]</code> → <code>"apple"</code><br>
+<code>fruits[1]</code> → <code>"banana"</code><br>
+<code>fruits[-1]</code> → <code>"mango"</code> (last item)<br><br>
+You can also <strong>update</strong> items: <code>fruits[0] = "pear"</code>`},
+      {heading:"Key List Methods", content:`<table>
+<tr><th>Method</th><th>What it does</th></tr>
+<tr><td><code>.append(x)</code></td><td>Add x to the end</td></tr>
+<tr><td><code>.insert(i, x)</code></td><td>Add x at position i</td></tr>
+<tr><td><code>.remove(x)</code></td><td>Remove first x found</td></tr>
+<tr><td><code>.pop()</code></td><td>Remove and return last item</td></tr>
+<tr><td><code>.sort()</code></td><td>Sort in place</td></tr>
+<tr><td><code>len(list)</code></td><td>Number of items</td></tr>
+</table>`}
+    ],
+    code:{label:"Lists in action 📋", starter:`# A list of aircraft types ✈️
+aircraft = ["A320", "B737", "A380", "B777"]
+print("Fleet:", aircraft)
+print("First:", aircraft[0])
+print("Last:", aircraft[-1])
+
+# Add a new aircraft
+aircraft.append("A350")
+print("After adding A350:", aircraft)
+
+# Remove one
+aircraft.remove("B737")
+print("After removing B737:", aircraft)
+
+# Sort alphabetically
+aircraft.sort()
+print("Sorted:", aircraft)
+print("Fleet size:", len(aircraft))`},
+    quiz:{
+      q:'Given colours = ["red","blue","green"], what is colours[1]?',
+      opts:["red","blue","green","Error"],
+      correct:1,
+      explanation:"Correct! 🎨 Lists start at index 0. So index 0 = 'red', index 1 = 'blue', index 2 = 'green'. Always count from zero!"
+    }
+  }
+};
+
+// Fill remaining chapters with placeholder data
+for(let i=11;i<=52;i++){
+  if(!chapters[i]){
+    const names={11:"Tuples",12:"Sets",13:"Dictionaries",14:"Boolean Logic",15:"If Statements",16:"Loops",17:"Functions",18:"Scope",19:"Modules",20:"Packages",21:"File Handling",22:"Exception Handling",23:"OOP Part 1",24:"OOP Part 2",25:"Dates & Time",26:"Regular Expressions",27:"JSON",28:"Virtual Environments",29:"Pip",30:"Debugging",31:"Testing",32:"Iterators",33:"Generators",34:"Decorators",35:"Lambda Functions",36:"List Comprehensions",37:"Type Hints",38:"Dataclasses",39:"Working with APIs",40:"Web Scraping",41:"NumPy",42:"Pandas",43:"Matplotlib",44:"OOP Design Principles",45:"Concurrency Basics",46:"Performance Optimisation",47:"Best Coding Practices",48:"Common Mistakes",49:"Real-World Projects",50:"Engineering Applications",51:"AI & ML Ecosystem",52:"Career Roadmap"};
+    chapters[i]={
+      title:names[i]||`Chapter ${i}`,
+      subtitle:"Full content in the downloadable handbook",
+      tag:`Chapter ${i}`,
+      isComingSoon:true
+    };
+  }
+}
+
+// ── Pyodide-like fake runner ──
+function runCode(code, outputEl) {
+  outputEl.className = 'output-box';
+  outputEl.textContent = '';
+  
+  const outputs = [];
+  const fakePrint = (...args) => { outputs.push(args.map(a=>String(a)).join(' ')); };
+  
+  // very limited safe execution via Function
+  try {
+    // We intercept print() calls by replacing them before eval
+    let transformed = code
+      .replace(/^#.*$/gm, '') // strip comments
+      .replace(/\binput\s*\(/g, 'fakeinput(');
+    
+    let result = null;
+    const fn = new Function('print','fakeinput',transformed);
+    fn(fakePrint, (prompt)=>{ outputs.push(prompt+'[user input not available in browser]'); return ''; });
+    
+    if(outputs.length === 0 && code.trim()){
+      outputEl.textContent = '(no output — make sure you used print()!)';
+    } else {
+      outputEl.textContent = outputs.join('\n');
+      outputEl.classList.add('has-output');
+    }
+  } catch(e) {
+    outputEl.textContent = '❌ ' + e.message;
+    outputEl.classList.add('error');
+  }
+}
+
+// ── AI Tutor ──
+async function askTutor(question, chapterTitle) {
+  const messagesEl = document.getElementById('ai-messages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = question;
+  messagesEl.appendChild(userMsg);
+
+  const loadingMsg = document.createElement('div');
+  loadingMsg.className = 'ai-msg tutor loading';
+  loadingMsg.textContent = '✨ thinking…';
+  messagesEl.appendChild(loadingMsg);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  aiHistory.push({role:'user', content: question});
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        system: `You are Pyra, a fun, encouraging Python tutor for teen girls inside an interactive handbook. The student is currently on: "${chapterTitle}". 
+Keep answers SHORT (2-5 sentences max). Use a warm, friendly tone with an occasional emoji. Give clear Python examples when helpful. Never be condescending. If they're stuck, break it into tiny steps. Use simple language.`,
+        messages: aiHistory
+      })
+    });
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || "Hmm, I couldn't connect. Try again!";
+    
+    aiHistory.push({role:'assistant', content: reply});
+    loadingMsg.remove();
+    
+    const tutorMsg = document.createElement('div');
+    tutorMsg.className = 'ai-msg tutor';
+    tutorMsg.innerHTML = reply.replace(/`([^`]+)`/g,'<code>$1</code>');
+    messagesEl.appendChild(tutorMsg);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  } catch(e) {
+    loadingMsg.textContent = '⚠️ Couldn\'t connect. Check your internet and try again!';
+    loadingMsg.classList.remove('loading');
+  }
+}
+
+// ── Render chapter ──
+function renderLesson(ch, chData) {
+  if(chData.isWelcome) return renderWelcome();
+  if(chData.isComingSoon) return renderComingSoon(ch, chData);
+
+  const main = document.getElementById('main-area');
+  main.innerHTML = '';
+
+  const panel = document.createElement('div');
+  panel.className = 'lesson-panel';
+
+  // Header
+  let html = `<div class="lesson-header">
+    <div class="lesson-tag">${chData.tag} 🌸</div>
+    <div class="lesson-title">${chData.title}</div>
+    <div class="lesson-subtitle">${chData.subtitle}</div>
+  </div>`;
+
+  // Objectives
+  if(chData.objectives){
+    html += `<div class="lesson-objectives"><strong>🎯 By the end of this chapter you will:</strong><ul>${chData.objectives.map(o=>`<li>${o}</li>`).join('')}</ul></div>`;
+  }
+
+  // Sections
+  html += '<div class="lesson-body">';
+  if(chData.sections){
+    chData.sections.forEach(s=>{
+      html += `<h3>${s.heading}</h3><p>${s.content}</p>`;
+    });
+  }
+  html += '</div>';
+
+  // Code editor
+  if(chData.code){
+    html += `<hr class="lesson-divider">
+    <div class="editor-section">
+      <div class="editor-header">
+        <div class="editor-title">✏️ Try it yourself</div>
+        <button class="run-btn" onclick="runCode(document.getElementById('code-ta').value, document.getElementById('code-out'))">▶ Run</button>
+      </div>
+      <textarea class="code-editor" id="code-ta" spellcheck="false">${chData.code.starter.trim()}</textarea>
+      <div style="padding:8px 16px;background:#fff;border-top:1px solid var(--border)">
+        <div class="output-label">Output</div>
+        <div class="output-box" id="code-out">Press ▶ Run to see output</div>
+      </div>
+    </div>`;
+  }
+
+  // Quiz
+  if(chData.quiz){
+    html += `<hr class="lesson-divider">
+    <div class="quiz-section">
+      <div class="quiz-title">🧠 Quick Check</div>
+      <div class="quiz-subtitle">Answer to unlock the next chapter!</div>
+      <div class="quiz-q">${chData.quiz.q}</div>
+      <div class="quiz-options">
+        ${chData.quiz.opts.map((o,i)=>`
+          <button class="quiz-opt" onclick="checkAnswer(${i}, ${chData.quiz.correct}, '${chData.quiz.explanation.replace(/'/g,"\\'")}', ${ch})">
+            <span class="quiz-opt-letter">${String.fromCharCode(65+i)}</span>${o}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+    </div>`;
+  }
+
+  panel.innerHTML = html;
+  main.appendChild(panel);
+
+  // AI tutor
+  const aiSection = document.createElement('div');
+  aiSection.className = 'ai-section';
+  aiHistory = []; // reset per chapter
+  aiSection.innerHTML = `
+    <div class="ai-title">💜 Ask Pyra — your AI tutor</div>
+    <div class="quick-asks">
+      <button class="quick-ask-btn" onclick="sendQuick('Can you explain this chapter in simpler terms?')">Simpler explanation</button>
+      <button class="quick-ask-btn" onclick="sendQuick('Give me another example')">Another example</button>
+      <button class="quick-ask-btn" onclick="sendQuick('Why is this useful in real life?')">Real-life use?</button>
+      <button class="quick-ask-btn" onclick="sendQuick('I\\'m confused, can you help me start?')">I\\'m confused 😅</button>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg tutor">Hi! I'm Pyra 💜 I'm here to help you with <strong>${chData.title}</strong>. Ask me anything — no question is too small! ✨</div>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="ai-input" type="text" placeholder="Ask Pyra anything about this chapter…" onkeydown="if(event.key==='Enter')sendAsk()">
+      <button class="ai-send-btn" onclick="sendAsk()">Ask ✨</button>
+    </div>`;
+  main.appendChild(aiSection);
+
+  // Bottom nav
+  const nav = document.createElement('div');
+  nav.className = 'bottom-nav';
+  nav.innerHTML = `
+    <button class="nav-btn" onclick="loadChapter(${ch-1})" ${ch<=1?'disabled':''}>← Previous</button>
+    <span class="chapter-progress">Chapter ${ch} of 52</span>
+    <button class="nav-btn primary" onclick="markDoneAndNext(${ch})">Complete & Next →</button>`;
+  main.appendChild(nav);
+}
+
+function sendQuick(q){ document.getElementById('ai-input').value=q; sendAsk(); }
+function sendAsk(){
+  const inp=document.getElementById('ai-input');
+  const q=inp.value.trim();
+  if(!q) return;
+  inp.value='';
+  const ch=chapters[currentChapter];
+  askTutor(q, ch?ch.title:'Python');
+}
+
+function checkAnswer(chosen, correct, explanation, ch){
+  const opts=document.querySelectorAll('.quiz-opt');
+  const feedback=document.getElementById('quiz-feedback');
+  opts.forEach((o,i)=>{
+    o.disabled=true;
+    if(i===correct) o.classList.add('correct');
+    else if(i===chosen && chosen!==correct) o.classList.add('wrong');
+  });
+  const isCorrect=chosen===correct;
+  feedback.className='quiz-feedback show '+(isCorrect?'good':'bad');
+  feedback.textContent=isCorrect?'✅ '+explanation:'❌ Not quite — '+explanation;
+  if(isCorrect) markComplete(ch);
+}
+
+function markComplete(ch){
+  completedChapters.add(ch);
+  localStorage.setItem('py_done', JSON.stringify([...completedChapters]));
+  updateProgress();
+  updateSidebar();
+}
+
+function markDoneAndNext(ch){
+  markComplete(ch);
+  loadChapter(ch+1);
+}
+
+function updateProgress(){
+  const done=completedChapters.size;
+  document.getElementById('progress-pill').textContent=`${done} / 52 chapters`;
+}
+
+function updateSidebar(){
+  document.querySelectorAll('.chapter-btn').forEach((btn,i)=>{
+    btn.classList.toggle('done', completedChapters.has(i));
+    btn.classList.toggle('active', i===currentChapter);
+    if(completedChapters.has(i)){
+      const icon=btn.querySelector('.ch-icon');
+      if(!icon){
+        const s=btn.querySelector('.ch-num');
+        if(s) s.style.background='var(--green-light)';
+      }
+    }
+  });
+}
+
+function renderWelcome(){
+  const main=document.getElementById('main-area');
+  main.innerHTML=`<div class="welcome">
+    <h2>Welcome to Python! 🌸✨</h2>
+    <p>This handbook turns your reading guide into an interactive learning experience — just like freeCodeCamp, but cuter and totally yours!</p>
+    <div class="welcome-cards">
+      <div class="welcome-card"><div class="icon">📖</div><h3>Lessons</h3><p>Clear explanations with examples from engineering and everyday life</p></div>
+      <div class="welcome-card"><div class="icon">💻</div><h3>Code Editor</h3><p>Run Python right in your browser — no setup needed!</p></div>
+      <div class="welcome-card"><div class="icon">🧠</div><h3>Quizzes</h3><p>Check your understanding after every chapter</p></div>
+      <div class="welcome-card"><div class="icon">💜</div><h3>AI Tutor</h3><p>Ask Pyra anything — she's powered by Claude and always here to help</p></div>
+    </div>
+    <button class="start-btn" onclick="loadChapter(1)">Start Learning → Chapter 1 🚀</button>
+  </div>`;
+}
+
+function renderComingSoon(ch, chData){
+  const main=document.getElementById('main-area');
+  main.innerHTML=`<div class="lesson-panel">
+    <div class="lesson-tag">${chData.tag}</div>
+    <div class="lesson-title">${chData.title}</div>
+    <div class="lesson-subtitle">${chData.subtitle}</div>
+    <div style="margin-top:28px;background:linear-gradient(135deg,var(--pink-light),var(--purple-light));border-radius:14px;padding:28px;text-align:center">
+      <div style="font-size:2.5em;margin-bottom:12px">📖</div>
+      <p style="font-weight:700;color:var(--purple);font-size:1.1em">Full lesson content is in your handbook!</p>
+      <p style="color:var(--muted);font-size:.9em;margin-top:8px">Chapters 1–10 are fully interactive here. For chapters 11–52, open <strong>Python_Handbook_Book.html</strong> which has the complete content.</p>
+      <p style="color:var(--muted);font-size:.9em;margin-top:8px">But you can still use Pyra below to ask questions about this chapter! 💜</p>
+    </div>
+    <div class="bottom-nav" style="padding:20px 0 0">
+      <button class="nav-btn" onclick="loadChapter(${ch-1})">← Previous</button>
+      <span class="chapter-progress">Chapter ${ch} of 52</span>
+      <button class="nav-btn primary" onclick="markDoneAndNext(${ch})">Mark done & Next →</button>
+    </div>
+  </div>
+  <div class="ai-section">
+    <div class="ai-title">💜 Ask Pyra about ${chData.title}</div>
+    <div class="quick-asks">
+      <button class="quick-ask-btn" onclick="sendQuick('What is ${chData.title.replace(/'/g,"\\'")} in Python?')">What is it?</button>
+      <button class="quick-ask-btn" onclick="sendQuick('Give me a simple example of ${chData.title.replace(/'/g,"\\'")}')">Show an example</button>
+      <button class="quick-ask-btn" onclick="sendQuick('When would I use ${chData.title.replace(/'/g,"\\'")}?')">When to use it?</button>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg tutor">Hi! I'm Pyra 💜 Even though the full lesson for <strong>${chData.title}</strong> is in your handbook, I can still explain it and answer your questions here! Ask me anything ✨</div>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="ai-input" type="text" placeholder="Ask Pyra anything about ${chData.title}…" onkeydown="if(event.key==='Enter')sendAsk()">
+      <button class="ai-send-btn" onclick="sendAsk()">Ask ✨</button>
+    </div>
+  </div>`;
+}
+
+function loadChapter(ch){
+  if(ch<0 || ch>52) return;
+  currentChapter=ch;
+  const chData=chapters[ch]||chapters[0];
+  renderLesson(ch, chData);
+  updateSidebar();
+  document.getElementById('main-area').scrollTop=0;
+}
+
+// ── Init ──
+updateProgress();
+loadChapter(0);
+</script>
+</body>
+</html>
